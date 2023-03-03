@@ -16,9 +16,11 @@ fun DashboardScreen(
     val viewModel: DashboardViewModel = hiltViewModel()
     val uiState by rememberStateWithLifecycle(stateFlow = viewModel.uiState)
     DashboardScreenContent(
-        uiState = uiState
-    ) {
-        val direction = DetailScreenDestination(it)
-        navigator.navigate(direction)
-    }
+        uiState = uiState,
+        onUpdateToggleState = viewModel::updateToggleState,
+        onUserSelected = {
+            val direction = DetailScreenDestination(it)
+            navigator.navigate(direction)
+        }
+    )
 }

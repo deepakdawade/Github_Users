@@ -8,7 +8,7 @@ data class DetailScreenUiState(
     val loading: Boolean = false,
     val user: User? = null
 ) {
-    val userId: String get() = user?.userId ?: ""
+    val userId: String get() = user?.nodeId ?: ""
 
     companion object {
         val STATE = DetailScreenUiState()

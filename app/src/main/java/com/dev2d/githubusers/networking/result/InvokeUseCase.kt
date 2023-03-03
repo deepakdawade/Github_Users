@@ -2,8 +2,12 @@ package com.dev2d.githubusers.networking.result
 
 import android.util.Log
 import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withTimeout
 import java.util.concurrent.TimeUnit
@@ -33,3 +37,27 @@ abstract class InvokeUseCase<in P> {
         private val defaultTimeoutMs = TimeUnit.MINUTES.toMillis(5)
     }
 }
+
+
+abstract class SubjectUseCase<P : Any, T> {
+    private val paramState = MutableSharedFlow<P>(
+        replay = 1,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
+    val flow: Flow<T> = paramState
+        .distinctUntilChanged()
+        .flatMapLatest { createObservable(it) }
+        .distinctUntilChanged()
+        .catch { error ->
+            Log.e(javaClass.name, error.stackTraceToString())
+        }
+
+    operator fun invoke(params: P) {
+        paramState.tryEmit(params)
+    }
+
+    protected abstract fun createObservable(params: P): Flow<T>
+}
+

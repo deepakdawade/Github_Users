@@ -24,7 +24,7 @@ class DetailViewModel @Inject constructor(
         user
     ) { loading, user ->
         DetailScreenUiState.STATE.copy(
-            user = user ?: User(userId = args.userId),
+            user = user ?: User(nodeId = args.userId),
             loading = loading
         )
     }.stateIn(
