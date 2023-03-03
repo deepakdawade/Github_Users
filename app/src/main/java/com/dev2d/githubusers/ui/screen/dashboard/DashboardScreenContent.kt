@@ -2,30 +2,41 @@ package com.dev2d.githubusers.ui.screen.dashboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.rounded.ThumbUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.dev2d.githubusers.R
 import com.dev2d.githubusers.data.User
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +51,11 @@ fun DashboardScreenContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Users")
+                    Text(
+                        text = "Users",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             )
         }
@@ -74,7 +89,8 @@ private fun DashboardScreenUserListing(
     onUserSelected: (id: String) -> Unit,
     onUpdateToggleState: (state: DashboardScreenUiState.ToggleState) -> Unit
 ) {
-    val span = if (selectedToggleState == DashboardScreenUiState.ToggleState.LIST) 1 else 2
+    val isListView = selectedToggleState == DashboardScreenUiState.ToggleState.LIST
+    val span = if (isListView) 1 else 2
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(span),
@@ -99,7 +115,13 @@ private fun DashboardScreenUserListing(
             key = {
                 it.id
             }) {
-            DashboardScreenUser(
+            if (isListView)
+                DashboardScreenUserHorizontal(
+                    modifier = Modifier.fillMaxWidth(),
+                    user = it,
+                    onUserSelected = onUserSelected
+                )
+            else DashboardScreenUserVertical(
                 modifier = Modifier.fillMaxWidth(),
                 user = it,
                 onUserSelected = onUserSelected
@@ -119,11 +141,16 @@ private fun DashboardScreenHeading(
 ) {
     val isGridView = selectedState == DashboardScreenUiState.ToggleState.GRID
     Row(
-        modifier = modifier.padding(horizontal = 16.dp, vertical = 0.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(text = "$count users", modifier = Modifier.weight(1F))
+        Text(
+            text = "$count users",
+            modifier = Modifier.weight(1F),
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.SemiBold
+        )
         FilledIconToggleButton(
             checked = isGridView,
             onCheckedChange = {
@@ -132,7 +159,8 @@ private fun DashboardScreenHeading(
                 onUpdateToggleState(state)
             }
         ) {
-            val icon = if (isGridView) Icons.Rounded.ThumbUp else Icons.Default.List
+            val icon =
+                if (isGridView) ImageVector.vectorResource(R.drawable.ic_dashboard) else Icons.Default.List
             Icon(imageVector = icon, contentDescription = "Switch list mode")
         }
     }
@@ -141,7 +169,7 @@ private fun DashboardScreenHeading(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DashboardScreenUser(
+private fun DashboardScreenUserHorizontal(
     modifier: Modifier,
     user: User,
     onUserSelected: (id: String) -> Unit
@@ -158,7 +186,65 @@ private fun DashboardScreenUser(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(text = user.nodeId)
+            AsyncImage(
+                model = user.avatarUrl,
+                contentDescription = "User Avatar",
+                modifier = Modifier
+                    .fillMaxWidth(0.3F)
+                    .aspectRatio(1F)
+                    .clip(CircleShape),
+            )
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = user.nodeId,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(text = "login: ${user.login}", style = MaterialTheme.typography.bodySmall)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DashboardScreenUserVertical(
+    modifier: Modifier,
+    user: User,
+    onUserSelected: (id: String) -> Unit
+) {
+    Card(
+        modifier = modifier,
+        onClick = {
+            onUserSelected(user.nodeId)
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AsyncImage(
+                model = user.avatarUrl,
+                contentDescription = "User Avatar",
+                modifier = Modifier
+                    .fillMaxWidth(0.7F)
+                    .aspectRatio(1F)
+                    .clip(CircleShape)
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = user.nodeId,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium
+            )
+            Text(text = "login: ${user.login}", style = MaterialTheme.typography.bodySmall)
         }
     }
 }

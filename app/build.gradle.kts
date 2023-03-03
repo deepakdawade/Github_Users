@@ -86,6 +86,9 @@ dependencies {
     implementation("androidx.room:room-paging:2.5.0")
     ksp("androidx.room:room-compiler:2.5.0")
 
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.0.0")
+
 }
 // Allow references to generated code
 kapt {
