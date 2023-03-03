@@ -128,7 +128,7 @@ private fun DetailScreenPager(
                     selected = pagerState.currentPage == index,
                     onClick = {
                         coroutineScope.launch {
-                            pagerState.scrollToPage(1)
+                            pagerState.scrollToPage(index)
                         }
                     },
                 )
@@ -139,7 +139,8 @@ private fun DetailScreenPager(
             count = pages.count(),
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1F)
+                .weight(1F),
+            state = pagerState
         ) {
             val list = when (it) {
                 0 -> followers
