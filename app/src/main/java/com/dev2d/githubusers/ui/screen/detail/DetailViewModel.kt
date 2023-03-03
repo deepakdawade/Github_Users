@@ -5,8 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev2d.githubusers.data.User
 import com.dev2d.githubusers.networking.domain.GetFollowersUseCase
-import com.dev2d.githubusers.networking.domain.GetSubscribersUseCase
+import com.dev2d.githubusers.networking.domain.GetSubscriptionsUseCase
 import com.dev2d.githubusers.networking.domain.GetUserUseCase
+import com.dev2d.githubusers.networking.response.Subscription
 import com.dev2d.githubusers.networking.result.InvokeStarted
 import com.dev2d.githubusers.networking.result.InvokeSuccess
 import com.dev2d.githubusers.ui.screen.destinations.DetailScreenDestination
@@ -24,23 +25,23 @@ class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getUserUseCase: GetUserUseCase,
     private val getFollowersUseCase: GetFollowersUseCase,
-    private val getSubscribersUseCase: GetSubscribersUseCase
+    private val getSubscriptionsUseCase: GetSubscriptionsUseCase
 ) : ViewModel() {
     private val args = DetailScreenDestination.argsFrom(savedStateHandle)
     private val loading = MutableStateFlow(false)
     private val user = MutableStateFlow<User?>(null)
     private val followers = MutableStateFlow(emptyList<User>())
-    private val subscribers = MutableStateFlow(emptyList<User>())
+    private val subscriptions = MutableStateFlow(emptyList<Subscription>())
     val uiState = combine(
         loading,
         user,
-        followers, subscribers
-    ) { loading, user, followers, subscribers ->
+        followers, subscriptions
+    ) { loading, user, followers, subscriptions ->
         DetailScreenUiState.STATE.copy(
             user = user,
             loading = loading,
             followers = followers,
-            subscribers = subscribers
+            subscriptions = subscriptions
         )
     }.stateIn(
         scope = viewModelScope,
@@ -65,10 +66,10 @@ class DetailViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            getSubscribersUseCase.invoke(args.id).collect {
+            getSubscriptionsUseCase.invoke(args.id).collect {
                 updateLoadingState(it is InvokeStarted)
                 if (it is InvokeSuccess) {
-                    updateSubscribers(it.data)
+                    updateSubscriptions(it.data)
                 }
             }
         }
@@ -86,8 +87,8 @@ class DetailViewModel @Inject constructor(
         this.followers.update { followers }
     }
 
-    private fun updateSubscribers(subscribers: List<User>) {
-        this.subscribers.update { subscribers }
+    private fun updateSubscriptions(subscriptions: List<Subscription>) {
+        this.subscriptions.update { subscriptions }
     }
 
 }

@@ -1,6 +1,7 @@
 package com.dev2d.githubusers.networking
 
 import com.dev2d.githubusers.data.User
+import com.dev2d.githubusers.networking.response.Subscription
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -13,9 +14,9 @@ interface NetworkService {
         @Path("loginId") loginId: String
     ): List<User>
 
-    @GET(EndPoints.SUBSCRIBERS)
-    suspend fun getSubscribers(
+    @GET(EndPoints.SUBSCRIPTIONS)
+    suspend fun getSubscriptions(
         @Path("loginId") loginId: String
-    ): List<User>
+    ): List<Subscription>
 
 }

@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.dev2d.githubusers.data.User
+import com.dev2d.githubusers.networking.response.Subscription
 import com.dev2d.githubusers.ui.theme.GithubUsersTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -92,7 +93,7 @@ fun DetailScreenContent(
                         .fillMaxWidth()
                         .weight(1F),
                     followers = uiState.followers,
-                    subscribers = uiState.subscribers
+                    subscriptions = uiState.subscriptions
                 )
             }
             if (uiState.loading) {
@@ -107,7 +108,7 @@ fun DetailScreenContent(
 private fun DetailScreenPager(
     modifier: Modifier,
     followers: List<User>,
-    subscribers: List<User>
+    subscriptions: List<Subscription>
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pages = listOf("Followers", "Subscribers")
@@ -143,21 +144,26 @@ private fun DetailScreenPager(
             state = pagerState
         ) {
             val list = when (it) {
-                0 -> followers
-                1 -> subscribers
-                else -> emptyList()
+                0 -> DetailScreenFollowersListing(
+                    modifier = Modifier.fillMaxSize(),
+                    followers = followers
+                )
+
+                1 -> DetailScreenSubscribersListing(
+                    modifier = Modifier.fillMaxWidth(),
+                    subscriptions = subscriptions
+                )
+
+                else -> Unit
             }
-            DetailScreenUserListing(modifier = Modifier.fillMaxSize(), users = list)
         }
-
-
     }
 }
 
 @Composable
-private fun DetailScreenUserListing(
+private fun DetailScreenFollowersListing(
     modifier: Modifier,
-    users: List<User>
+    followers: List<User>
 ) {
     LazyColumn(
         modifier = modifier,
@@ -165,18 +171,18 @@ private fun DetailScreenUserListing(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(
-            items = users,
+            items = followers,
             key = {
                 it.id
             }
         ) {
-            DetailScreenUser(modifier = Modifier.fillMaxWidth(), user = it)
+            DetailScreenFollower(modifier = Modifier.fillMaxWidth(), user = it)
         }
     }
 }
 
 @Composable
-private fun DetailScreenUser(
+private fun DetailScreenFollower(
     modifier: Modifier,
     user: User
 ) {
@@ -208,6 +214,66 @@ private fun DetailScreenUser(
                     fontWeight = FontWeight.Medium
                 )
                 Text(text = "login: ${user.login}", style = MaterialTheme.typography.bodySmall)
+            }
+        }
+    }
+}
+
+@Composable
+private fun DetailScreenSubscribersListing(
+    modifier: Modifier,
+    subscriptions: List<Subscription>
+) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(
+            items = subscriptions,
+            key = {
+                it.id
+            }
+        ) {
+            DetailScreenSubscription(modifier = Modifier.fillMaxWidth(), subscription = it)
+        }
+    }
+}
+
+@Composable
+private fun DetailScreenSubscription(
+    modifier: Modifier,
+    subscription: Subscription
+) {
+    Card(
+        modifier = modifier
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            AsyncImage(
+                model = subscription.owner.avatarUrl,
+                contentDescription = "User Avatar",
+                modifier = Modifier
+                    .fillMaxWidth(0.3F)
+                    .aspectRatio(1F)
+                    .clip(CircleShape),
+            )
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = subscription.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(text = subscription.full_name, style = MaterialTheme.typography.bodyMedium)
+                Text(text = subscription.description, style = MaterialTheme.typography.bodySmall)
             }
         }
     }

@@ -3,6 +3,7 @@ package com.dev2d.githubusers.networking.repository
 import com.dev2d.githubusers.data.User
 import com.dev2d.githubusers.data.UserDao
 import com.dev2d.githubusers.networking.NetworkService
+import com.dev2d.githubusers.networking.response.Subscription
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,7 +25,7 @@ class GithubUserRepository @Inject constructor(
         return networkService.getFollowers(loginId = loginId)
     }
 
-    suspend fun getSubscribers(loginId: String): List<User> {
-        return networkService.getSubscribers(loginId = loginId)
+    suspend fun getSubscriptions(loginId: String): List<Subscription> {
+        return networkService.getSubscriptions(loginId = loginId)
     }
 }
