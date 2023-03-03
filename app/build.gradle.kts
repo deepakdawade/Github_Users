@@ -67,6 +67,18 @@ dependencies {
 
     implementation("io.github.raamcosta.compose-destinations:core:1.7.35-beta")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.7.35-beta")
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
+
+    // OKHttp
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor")
+    implementation("com.squareup.okhttp3:okhttp-urlconnection")
+    implementation("com.squareup.okhttp3:okhttp-bom:4.9.3")
+
 }
 // Allow references to generated code
 kapt {
