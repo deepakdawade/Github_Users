@@ -9,5 +9,8 @@ data class User(
 
     @PrimaryKey
     @ColumnInfo(name = "id")
-    val id: Int = 0
+    val id: Int = 0,
+
+    @ColumnInfo(name = "user_id")
+    val userId: String = ""
 )
