@@ -39,6 +39,29 @@ abstract class InvokeUseCase<in P> {
 }
 
 
+abstract class InvokeResultUseCase<in P, R> {
+    operator fun invoke(params: P): Flow<InvokeStatus<R>> {
+        return flow {
+            withTimeout(defaultTimeoutMs) {
+                emit(InvokeStarted)
+                val result = doWork(params)
+                emit(InvokeSuccess(result))
+            }
+
+        }.catch { error ->
+            Log.e(javaClass.name, error.stackTraceToString())
+            emit(InvokeError(error))
+        }
+    }
+
+    protected abstract suspend fun doWork(params: P): R
+
+    companion object {
+        private val defaultTimeoutMs = TimeUnit.MINUTES.toMillis(5)
+    }
+}
+
+
 abstract class SubjectUseCase<P : Any, T> {
     private val paramState = MutableSharedFlow<P>(
         replay = 1,

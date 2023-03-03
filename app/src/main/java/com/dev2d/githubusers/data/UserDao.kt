@@ -14,7 +14,10 @@ interface UserDao {
     @Query("SELECT * FROM github_users")
     fun allUsers(): Flow<List<User>>
 
+    @Query("SELECT * FROM github_users WHERE login=:id LIMIT 1")
+    fun getUser(id: String): Flow<User>
+
     @Query("DELETE FROM github_users")
-    fun dropRecipes()
+    fun dropUsers()
 
 }

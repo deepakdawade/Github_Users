@@ -6,7 +6,9 @@ import com.dev2d.githubusers.data.User
 @Immutable
 data class DetailScreenUiState(
     val loading: Boolean = false,
-    val user: User? = null
+    val user: User? = null,
+    val followers: List<User> = emptyList(),
+    val subscribers: List<User> = emptyList(),
 ) {
     val userId: String get() = user?.nodeId ?: ""
 

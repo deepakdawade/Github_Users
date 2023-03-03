@@ -10,7 +10,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination
 @Composable
 fun DetailScreen(
-    userId: String,
+    id: String,
     navigator: DestinationsNavigator
 ) {
     val viewModel: DetailViewModel = hiltViewModel()

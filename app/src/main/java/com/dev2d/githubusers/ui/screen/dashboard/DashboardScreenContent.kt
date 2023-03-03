@@ -114,7 +114,8 @@ private fun DashboardScreenUserListing(
             items = users,
             key = {
                 it.id
-            }) {
+            },
+        ) {
             if (isListView)
                 DashboardScreenUserHorizontal(
                     modifier = Modifier.fillMaxWidth(),
@@ -177,7 +178,7 @@ private fun DashboardScreenUserHorizontal(
     Card(
         modifier = modifier,
         onClick = {
-            onUserSelected(user.nodeId)
+            onUserSelected(user.login)
         }
     ) {
         Row(
@@ -220,7 +221,7 @@ private fun DashboardScreenUserVertical(
     Card(
         modifier = modifier,
         onClick = {
-            onUserSelected(user.nodeId)
+            onUserSelected(user.login)
         }
     ) {
         Column(

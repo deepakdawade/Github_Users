@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev2d.githubusers.data.User
 import com.dev2d.githubusers.networking.domain.FetchUsersUseCase
-import com.dev2d.githubusers.networking.domain.GetUserUseCase
+import com.dev2d.githubusers.networking.domain.GetUsersUseCase
 import com.dev2d.githubusers.networking.result.InvokeStarted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val fetchUsersUseCase: FetchUsersUseCase,
-    private val getUserUseCase: GetUserUseCase
+    private val getUsersUseCase: GetUsersUseCase
 ) : ViewModel() {
     private val loading = MutableStateFlow(false)
     private val toggleState = MutableStateFlow(DashboardScreenUiState.ToggleState.LIST)
@@ -46,10 +46,10 @@ class DashboardViewModel @Inject constructor(
             }
         }
 
-        getUserUseCase.invoke(Unit)
+        getUsersUseCase.invoke(Unit)
 
         viewModelScope.launch {
-            getUserUseCase.flow.collect {
+            getUsersUseCase.flow.collect {
                 updateUsers(it)
             }
         }

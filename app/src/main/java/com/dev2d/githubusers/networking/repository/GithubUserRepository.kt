@@ -18,4 +18,13 @@ class GithubUserRepository @Inject constructor(
     }
 
     fun getUsers(): Flow<List<User>> = userDao.allUsers()
+    fun getUser(id: String): Flow<User> = userDao.getUser(id)
+
+    suspend fun getFollowers(loginId: String): List<User> {
+        return networkService.getFollowers(loginId = loginId)
+    }
+
+    suspend fun getSubscribers(loginId: String): List<User> {
+        return networkService.getSubscribers(loginId = loginId)
+    }
 }

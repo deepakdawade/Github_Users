@@ -6,11 +6,10 @@ import com.dev2d.githubusers.networking.result.SubjectUseCase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetUserUseCase @Inject constructor(
+class GetUsersUseCase @Inject constructor(
     private val repository: GithubUserRepository
-) : SubjectUseCase<String, User>() {
-
-    override fun createObservable(params: String): Flow<User> {
-        return repository.getUser(params)
+) : SubjectUseCase<Unit, List<User>>() {
+    override fun createObservable(params: Unit): Flow<List<User>> {
+        return repository.getUsers()
     }
 }

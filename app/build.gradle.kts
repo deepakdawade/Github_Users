@@ -89,6 +89,11 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.0.0")
 
+    // Pager
+    implementation("com.google.accompanist:accompanist-pager:0.29.1-alpha")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.29.1-alpha")
+
+
 }
 // Allow references to generated code
 kapt {
