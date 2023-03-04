@@ -111,7 +111,7 @@ private fun DetailScreenPager(
     subscriptions: List<Subscription>
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val pages = listOf("Followers", "Subscribers")
+    val pages = listOf("Followers", "Subscriptions")
     val pagerState = rememberPagerState()
     val context = LocalContext.current
     Column(
